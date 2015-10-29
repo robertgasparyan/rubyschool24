@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/reloader'
+require 'sqlite3'
 
 get '/' do
 	erb "Hello World of Mine! <a href=\"https://github.com/bootstrap-ruby/sinatra-bootstrap\">Original</a> pattern has been modified for <a href=\"http://rubyschool.us/\">Ruby School</a>"
@@ -34,17 +35,24 @@ post '/visit' do
     erb :visit
     else
 
+    db = SQLite3::Database.new  "barber.sqlite"
+    db.execute "insert into 'Visits' (Name,Phone,Date) values ('#{@user_name}','#{@user_phone}','#{@user_date}')";
+
     combined_data = "#{@user_name} - #{@user_phone} - #{@user_date} - #{@barbername}\n\n"
 
     users_file = File.open "public/visits.txt", "a" do |file|
         file.write(combined_data)
         file.write "\n"
-      end
+    end
+
+  #prepare to sending emails
+
       @message = "Complete"
       erb :thankyou
   end
 
 end
+
 
 get '/contacts' do
   erb :contacts
